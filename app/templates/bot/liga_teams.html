@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+{% block title %}
+    <title>TEAMS BOT</title>
+{% endblock title %}
+
+{% block content %}
+<form action="{{ url_for('results_liga') }}" method="POST">
+    {{ form.csrf_token }}
+    <div class="form-group">
+    <select class="form-control" name="team_left" id="team_left_list">
+        {% for team in teams %}
+        <option value="{{ team.team_cod }}">{{ team.team_name }} ( {{ team.team_href }} )</option> 
+        {% endfor %}
+    </select>
+    </div>
+    <div class="form-group">
+    <select class="form-control" name="team_right" id="team_right_list">
+        {% for team in teams %}
+        <pre>{{team}}</pre>
+        <option value="{{ team.team_cod }}">{{ team.team_name }} ( {{ team.team_href }} )</option> 
+        {% endfor %}
+    </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Sign IN</button>
+    </form>
+{% endblock content %}

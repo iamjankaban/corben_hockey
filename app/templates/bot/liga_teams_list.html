@@ -1,0 +1,55 @@
+{% extends "index.html" %}
+
+{% block title %}
+    <title>TEAMS BOT</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <tbody>
+                    {% for temp in temps['home'] %}
+                    <tr>
+                        <td>{{ temp.match_id }}</td> 
+                        <td>{{ temp.date }}</td>
+                        <td>{{ temps_name[temp.team_left] }}</td>
+                        <td>{{ temps_name[temp.team_right] }}</td>
+                        <td>
+                        {% for value in score['home'][temp.match_id] %}
+                            {% for key in value.keys() %}
+                            <small class="text-muted">{{ key }} </small>
+                            {{ value[key]['h'] }}-{{ value[key]['a'] }}
+                            {% endfor %}
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-12">
+                <table class="table">
+                    <tbody>
+                        {% for temp in temps['away'] %}
+                        <tr>
+                            <td>{{ temp.match_id }}</td> 
+                            <td>{{ temp.date }}</td>
+                            <td>{{ temps_name[temp.team_lef                                                                                                                                                                                     t] }}</td>
+                            <td>{{ temps_name[temp.team_right] }}</td>
+                            <td>
+                            {% for value in score['away'][temp.match_id] %}
+                                {% for key in value.keys() %}
+                                <small class="text-muted">{{ key }} </small>
+                                {{ value[key]['h'] }}-{{ value[key]['a'] }}
+                                {% endfor %}
+                            {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+
+{% endblock content %}

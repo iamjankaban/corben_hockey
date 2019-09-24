@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block title %}
+    <title>LIGA BOT</title>
+{% endblock title %}
+
+{% block content %}
+<form action="{{ url_for('start_liga') }}" method="POST">
+    {{ form.csrf_token }}
+    <div class="form-group">
+    <label for="liga_list">Example select</label>
+    <select multiple class="form-control" name="input_liga" id="liga_list">
+        {% for option in options %}
+        <option value="{{ option.liga_cod }}">{{ option.liga_name }} ( {{ option.liga_cod }} )</option> 
+        {% endfor %}
+    </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Sign IN</button>
+    </form>
+{% endblock content %}
