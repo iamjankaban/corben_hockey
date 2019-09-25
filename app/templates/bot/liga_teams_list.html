@@ -1,55 +1,150 @@
-{% extends "index.html" %}
+{% extends "bot/liga_nav.html" %}
 
-{% block title %}
+{% block title_nav %}
     <title>TEAMS BOT</title>
-{% endblock title %}
+{% endblock title_nav %}
 
-{% block content %}
-    <div class="row">
-        <div class="col-12">
+{% block home %}
+<div class="row">
+    {% for temp in temps['home'] %}
+    <div class="col-12">
+        <div class="border m-2 p-2">
+            <h3 class="text-uppercase"><small>match id</small> {{ temp.match_id }}</h3>
             <table class="table">
-                <tbody>
-                    {% for temp in temps['home'] %}
+                <tbody class="text-uppercase text-center">
                     <tr>
-                        <td>{{ temp.match_id }}</td> 
                         <td>{{ temp.date }}</td>
                         <td>{{ temps_name[temp.team_left] }}</td>
                         <td>{{ temps_name[temp.team_right] }}</td>
-                        <td>
-                        {% for value in score['home'][temp.match_id] %}
-                            {% for key in value.keys() %}
-                            <small class="text-muted">{{ key }} </small>
-                            {{ value[key]['h'] }}-{{ value[key]['a'] }}
-                            {% endfor %}
-                        {% endfor %}
-                        </td>
                     </tr>
-                    {% endfor %}
                 </tbody>
             </table>
-        </div>
-        <div class="col-12">
-                <table class="table">
-                    <tbody>
-                        {% for temp in temps['away'] %}
-                        <tr>
-                            <td>{{ temp.match_id }}</td> 
-                            <td>{{ temp.date }}</td>
-                            <td>{{ temps_name[temp.team_left] }}</td>
-                            <td>{{ temps_name[temp.team_right] }}</td>
-                            <td>
-                            {% for value in score['away'][temp.match_id] %}
-                                {% for key in value.keys() %}
-                                <small class="text-muted">{{ key }} </small>
-                                {{ value[key]['h'] }}-{{ value[key]['a'] }}
-                                {% endfor %}
-                            {% endfor %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <hr>
+            <div class="row">
+                {% for value in score['home'][temp.match_id] %}
+                    <div class="col"><pre>{{ value }}</pre></div>
+                {% endfor %}
             </div>
+            <div class="row">
+                {% for nam in ['history_home','history_away'] %}
+                <div class="col-12"><h5 class="text-uppercase">{{ nam }}</h5></div>
+                    {% for value in history['home'][nam][temp.match_id] %}
+                        <div class="col">
+                        {% for val in value %}
+                            <h6 class="text-uppercase">{{ val }}</h6>
+                            {% for vv in value[val]  %}
+                                <p>
+                                <pre>{{ vv }}</pre>
+                                </p>        
+                            {% endfor %}                                        
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% endfor %}                                
+            </div>
+            <div class="row">
+                {% for value in statistic['home'][temp.match_id] %}
+                    <div class="col">
+                        {% for val in value %}
+                        <h5 class="text-uppercase">{{ val }}</h5>
+                            {% for vv in value[val]  %}
+                                <p>
+                                <h6>{{ vv }}</h6>
+                                <pre>{{ value[val][vv] }}</pre>
+                                </p>        
+                            {% endfor %}                                        
+                        {% endfor %}
+                        </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                {% for value in lineups['home'][temp.match_id] %}
+                <div class="col">
+                    <h5 class="text-uppercase">{{ value }}</h5>
+                    <ul>
+                    {% for val in lineups['home'][temp.match_id][value] %}
+                        <li>{{ val }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
     </div>
+    {% endfor %}
+    </div>
+{% endblock home %}
 
-{% endblock content %}
+
+{% block away %}
+<div class="row">
+    {% for temp in temps['away'] %}
+    <div class="col-12">
+        <div class="border m-2 p-2">
+            <h3 class="text-uppercase"><small>match id</small> {{ temp.match_id }}</h3>
+            <table class="table">
+                <tbody class="text-uppercase text-center">
+                    <tr>
+                        <td>{{ temp.date }}</td>
+                        <td>{{ temps_name[temp.team_left] }}</td>
+                        <td>{{ temps_name[temp.team_right] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <div class="row">
+                {% for value in score['away'][temp.match_id] %}
+                    <div class="col"><pre>{{ value }}</pre></div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                {% for nam in ['history_home','history_away'] %}
+                <div class="col-12"><h5 class="text-uppercase">{{ nam }}</h5></div>
+                    {% for value in history['away'][nam][temp.match_id] %}
+                        <div class="col">
+                        {% for val in value %}
+                            <h6 class="text-uppercase">{{ val }}</h6>
+                            {% for vv in value[val]  %}
+                                <p>
+                                <pre>{{ vv }}</pre>
+                                </p>        
+                            {% endfor %}                                        
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% endfor %}                                
+            </div>
+            <div class="row">
+                {% for value in statistic['away'][temp.match_id] %}
+                    <div class="col">
+                        {% for val in value %}
+                        <h5 class="text-uppercase">{{ val }}</h5>
+                            {% for vv in value[val]  %}
+                                <p>
+                                <h6>{{ vv }}</h6>
+                                <pre>{{ value[val][vv] }}</pre>
+                                </p>        
+                            {% endfor %}                                        
+                        {% endfor %}
+                        </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                {% for value in lineups['away'][temp.match_id] %}
+                <div class="col">
+                    <h5 class="text-uppercase">{{ value }}</h5>
+                    <ul>
+                    {% for val in lineups['away'][temp.match_id][value] %}
+                        <li>{{ val }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+    </div>
+    {% endfor %}
+    </div>
+{% endblock away %}

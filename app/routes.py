@@ -4,7 +4,7 @@ from flask import render_template, request
 from datetime import datetime
 
 from app.forms import LigaForm, TeamsForm
-from app.controllers import listLiga, teamsInLiga, teamsName, matchesList, matchesScore
+from app.controllers import listLiga, teamsInLiga, teamsName, matchesList, matchesScore, matchesLineups, matchesStatistic, matchesHistory
 
 from copy import copy
 
@@ -39,21 +39,25 @@ def start_liga():
 
 @app.route('/results', methods = ['POST'])
 def results_liga():
-    temps = {}
+    temps,score,lineups,statistic,history = {},{},{},{},{}
     form = TeamsForm(request.form)
     form.validate()
     print(form.errors)
-    if form.validate():
+    if form.validate():   
+        home,away = request.form.get('team_left'),request.form.get('team_right')
+        temps = matchesList(home,away)
+        score = matchesScore(temps.matches_cod).score
+        lineups = matchesLineups(temps.matches_cod).lineups
+        history = matchesHistory(temps.matches_cod).history
+        statistic = matchesStatistic(temps.matches_cod).statistic 
         try:
-            home,away = request.form.get('team_left'),request.form.get('team_right')
-            temps = matchesList(home,away)
-            score = matchesScore(temps.matches_cod).score
+            pass
         except:
             pass                
     else:
         print('ERROR VALIDATE')
         pass
-    return render_template('bot/liga_teams_list.html', form = form, score = score, temps = temps.matches, temps_name = temps.teams_name)
+    return render_template('bot/liga_teams_list.html', form = form, score = score, lineups = lineups, statistic = statistic, history = history, temps = temps.matches, temps_name = temps.teams_name)
 
 # @app.errorhandler(404)
 # def not_found_error(error):

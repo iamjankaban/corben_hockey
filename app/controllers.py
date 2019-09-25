@@ -6,12 +6,15 @@ class SqlQuery:
     
     def sql_query(self,sql):
         rows = []
-        with connect(dbname='sport_user', user='sport_user', password='passw0rd', host='localhost') as conn:
+        print("SQL = ",sql)
+        # with connect(dbname='sport_user', user='sport_user', password='passw0rd', host='localhost') as conn:
+        with connect(dbname='postgres', user='admin_hock', password='admin666hock', host='176.57.208.119') as conn:
             with conn.cursor(cursor_factory = NamedTupleCursor) as cursor:
                 cursor.execute(sql)                
                 for row in cursor:
                     rows.append(row)
         return rows
+
 
 class listLiga(SqlQuery):
     rows = []
@@ -20,6 +23,7 @@ class listLiga(SqlQuery):
     
     def sql_query_list(self):
         return self.sql_query('SELECT * FROM liga_hock ORDER BY liga_country, liga_name DESC') 
+
 
 class teamsName(SqlQuery):
     teams_name = {}
@@ -31,6 +35,7 @@ class teamsName(SqlQuery):
         team = "','".join(teams)
         sql = f"SELECT team_cod, team_href, team_image, team_name FROM team_hock WHERE team_cod IN ('{team}')"
         return self.sql_query(sql)
+
 
 class matchesScore(SqlQuery):
     score = { 'home':{},'away':{} }
@@ -48,6 +53,66 @@ class matchesScore(SqlQuery):
     def sql_query_list(self,cod):
         matches_cod = "','".join(cod)
         sql = f"SELECT score_match_cod, score_match, score_period FROM score_hock WHERE score_match_cod IN ('{ matches_cod }')"
+        return self.sql_query(sql)
+
+
+class matchesLineups(SqlQuery):
+    lineups = { 'home':{},'away':{} }
+    def __init__(self,matches):
+        for value in ['home','away']:
+            for temp_lineups in self.sql_query_list(matches[value]):
+                array = {
+                    'lineups_home' : temp_lineups.lineups_home,
+                    'lineups_home_mis' : temp_lineups.lineups_home_mis,
+                    'lineups_away' : temp_lineups.lineups_away,
+                    'lineups_away_mis' : temp_lineups.lineups_away_mis
+                }
+                self.lineups[value][temp_lineups.lineups_match_cod] = array
+                
+
+    def sql_query_list(self,cod):
+        matches_cod = "','".join(cod)
+        sql = f"SELECT lineups_match_cod, lineups_home, lineups_home_mis, lineups_away, lineups_away_mis FROM public.lineups_hock WHERE lineups_match_cod IN ('{ matches_cod }')"
+        return self.sql_query(sql)
+
+
+class matchesStatistic(SqlQuery):
+    statistic = { 'home':{},'away':{} }
+    def __init__(self,matches):
+        for value in ['home','away']:
+            for temp_statistic in self.sql_query_list(matches[value]):
+                array = []
+                for key in temp_statistic.statistic_data.keys():
+                    if key == "0":
+                        tkey = 'match'
+                    else:
+                        tkey = key
+                    array.append({ tkey : temp_statistic.statistic_data[key] })
+                self.statistic[value][temp_statistic.statistic_match_cod] = array                
+
+    def sql_query_list(self,cod):
+        matches_cod = "','".join(cod)
+        sql = f"SELECT statistic_id, statistic_match_cod, statistic_data FROM public.statistic_hock WHERE statistic_match_cod IN ('{ matches_cod }')"
+        return self.sql_query(sql)
+
+
+class matchesHistory(SqlQuery):
+    history = { 'home':{ 'history_home':{}, 'history_away':{} },'away':{ 'history_home':{}, 'history_away':{} } }
+    def __init__(self,matches):
+        for value in ['home','away']:
+            for temp_history in self.sql_query_list(matches[value]):
+                array = []
+                for key in temp_history.history_home.keys():
+                    array.append({ key : temp_history.history_home[key] })
+                self.history[value]['history_home'][temp_history.history_match_cod] = array
+                array = []
+                for key in temp_history.history_away.keys():
+                    array.append({ key : temp_history.history_away[key] })
+                self.history[value]['history_away'][temp_history.history_match_cod] = array                
+
+    def sql_query_list(self,cod):
+        matches_cod = "','".join(cod)
+        sql = f"SELECT history_match_cod, history_home, history_away FROM public.history_hock WHERE history_match_cod IN ('{ matches_cod }')"
         return self.sql_query(sql)
 
 class matchesList(SqlQuery):
@@ -89,6 +154,7 @@ class matchesList(SqlQuery):
             self.matches[side] = self.sql_query(sql)
         return self.matches
         
+
 class teamsInLiga(SqlQuery):
     teams = []
     def __init__(self,ligas):
